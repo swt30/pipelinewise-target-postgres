@@ -43,8 +43,9 @@ def column_type(schema_property):
     col_type = 'character varying'
     if 'object' in property_type or 'array' in property_type:
         col_type = 'jsonb'
-
-    # Every date-time JSON value is currently mapped to TIMESTAMP WITHOUT TIME ZONE
+    elif property_format == 'uuid':
+        col_type = 'uuid'
+    # Every date-time JSON value is currently mapped to TIMESTAMP WITH TIME ZONE
     #
     # TODO: Detect if timezone postfix exists in the JSON and find if TIMESTAMP WITHOUT TIME ZONE or
     # TIMESTAMP WITH TIME ZONE is the better column type
