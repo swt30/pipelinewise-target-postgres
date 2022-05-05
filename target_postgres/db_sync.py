@@ -40,11 +40,13 @@ def validate_config(config):
 def column_type(schema_property):
     property_type = schema_property['type']
     property_format = schema_property['format'] if 'format' in schema_property else None
-    col_type = 'character varying'
+    col_type = 'text'
     if 'object' in property_type or 'array' in property_type:
         col_type = 'jsonb'
     elif property_format == 'uuid':
         col_type = 'uuid'
+    elif property_format == 'date':
+        col_type = 'date'
     # Every date-time JSON value is currently mapped to TIMESTAMP WITH TIME ZONE
     #
     # TODO: Detect if timezone postfix exists in the JSON and find if TIMESTAMP WITHOUT TIME ZONE or
