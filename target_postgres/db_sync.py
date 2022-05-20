@@ -99,7 +99,7 @@ def flatten_key(k, parent_key, sep):
 
 
 # pylint: disable=dangerous-default-value,invalid-name
-def flatten_schema(d, parent_key=[], sep='__', level=0, max_level=0):
+def flatten_schema(d, parent_key=[], sep='__', level=0, max_level=0, sort=False):
     items = []
 
     if 'properties' not in d:
@@ -130,7 +130,7 @@ def flatten_schema(d, parent_key=[], sep='__', level=0, max_level=0):
         if len(list(g)) > 1:
             raise ValueError('Duplicate column name produced in schema: {}'.format(k))
 
-    return dict(sorted_items)
+    return dict(sorted_items) if sort else dict(items)
 
 
 # pylint: disable=redefined-outer-name
