@@ -67,6 +67,12 @@ def column_type(schema_property):
                 col_type = 'integer'
             elif schema_property['maximum'] <= 9223372036854775807:
                 col_type = 'bigint'
+            else:
+                # if the source still has a maximum, it's probably bigint
+                # unsigned postgres doesn't support unsigned and it's unlikely
+                # you'll exhaust a standard bigint. so we use bigint here,
+                # rather than falling back to the much less palatable numeric
+                col_type = 'bigint'
         else:
             col_type = 'numeric'
     elif 'boolean' in property_type:
