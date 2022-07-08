@@ -10,6 +10,8 @@ import time
 from collections.abc import MutableMapping
 from singer import get_logger
 
+newline_not_escaped = re.compile(r'(?<!\\)\\n') # literal \n but not \\n
+tab_not_escaped     = re.compile(r'(?<!\\)\\t') # literal \t but not \\t
 
 # pylint: disable=missing-function-docstring,missing-class-docstring
 def validate_config(config):
@@ -355,13 +357,17 @@ class DbSync:
 
     def record_to_csv_line(self, record):
         flatten = flatten_record(record, self.flatten_schema, max_level=self.data_flattening_max_level)
-        return ','.join(
+        row = ','.join(
             [
                 json.dumps(flatten[name], ensure_ascii=False)
                 if name in flatten and (flatten[name] == 0 or flatten[name]) else ''
                 for name in self.flatten_schema
             ]
         )
+        # replace newlines "\n" and tabs "\t" with the actual character
+        row = re.sub(newline_not_escaped, '\n', row)
+        row = re.sub(tab_not_escaped,     '\t', row)
+        return row
 
     def load_csv(self, file, count, size_bytes):
         stream_schema_message = self.stream_schema_message
